@@ -3,6 +3,7 @@ package com.example.outfitgenerator
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -30,9 +31,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.outfitgenerator.MainViewModel.MainViewModel
 import com.example.outfitgenerator.ui.theme.OutfitGeneratorTheme
 
 class MainActivity : ComponentActivity() {
+    private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -58,7 +61,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen() {
+fun LoginScreen(viewModel: MainViewModel) {
     var username = ""
     var password = ""
     var passwordVisible = false
@@ -87,7 +90,7 @@ fun LoginScreen() {
             label = { Text("Password") },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
-                val image = if (passwordVisible)
+                val image = if (!passwordVisible)
                     Icons.Default.Face
                 else Icons.Default.ArrowBack
 
@@ -101,7 +104,12 @@ fun LoginScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { /* Metodo para iniciar sesion */ }, modifier = Modifier.fillMaxWidth()) {
+        Button(onClick = {
+            var userauthenticate = viewModel.getUserByUsername(username)
+            if(userauthenticate == null){
+                viewModel.createUser()
+            }
+        }, modifier = Modifier.fillMaxWidth()) {
             Text("Login")
         }
     }

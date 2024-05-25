@@ -24,6 +24,14 @@ class MainRepository {
             null
         }
     }
+    suspend fun createUser(user: User): User? {
+        val webResponse = fitsService.createUser(user).await()
+        return if (webResponse.isSuccessful) {
+            webResponse.body()?.usuario
+        } else {
+            null
+        }
+    }
     suspend fun getPieceDetail(id: String): Piece? {
         val webResponse = fitsService.getPieceDetail(id).await()
         return if (webResponse.isSuccessful) {
