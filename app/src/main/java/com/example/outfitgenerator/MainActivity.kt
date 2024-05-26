@@ -26,6 +26,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -36,6 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import com.example.outfitgenerator.MainViewModel.MainViewModel
 import com.example.outfitgenerator.ui.theme.OutfitGeneratorTheme
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
@@ -66,8 +70,8 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun LoginScreen(viewModel: MainViewModel) {
     val context = LocalContext.current
-    var username = ""
-    var password = ""
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var passwordVisible = false
     Column(
         modifier = Modifier
@@ -110,7 +114,7 @@ fun LoginScreen(viewModel: MainViewModel) {
 
         Button(onClick = {
             var userauthenticate = viewModel.getUserByUsername(username)
-            if(userauthenticate == null){
+            if(userauthenticate.value== null){
                 var sessionUser = viewModel.createUser(username, password)
                 var sessionUserId = sessionUser.value!!.id
                 val intent = Intent(context, SecondActivity::class.java)
