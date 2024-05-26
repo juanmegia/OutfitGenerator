@@ -69,10 +69,10 @@ class MainViewModel : ViewModel() {
         }
         return createdOutfit
     }
-    fun createUser(user: User): MutableLiveData<User> {
+    fun createUser(username: String, password : String): MutableLiveData<User> {
         val createdUser = MutableLiveData<User>()
         GlobalScope.launch(Dispatchers.Main) {
-            createdUser.value = repository.createUser(user)
+            createdUser.value = repository.createUser(username, password)
         }
         return createdUser
     }

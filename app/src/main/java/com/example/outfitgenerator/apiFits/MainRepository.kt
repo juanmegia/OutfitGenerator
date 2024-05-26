@@ -6,7 +6,7 @@ import com.example.outfitgenerator.models.Respuesta
 import com.example.outfitgenerator.models.User
 
 class MainRepository {
-    val fitsService = FitsAccess.fitsService;
+    private val fitsService = FitsAccess.fitsService;
 
     suspend fun getPieceList(userId: String?): List<Piece> {
         val webResponse = fitsService.getPieceList(userId).await()
@@ -24,8 +24,8 @@ class MainRepository {
             null
         }
     }
-    suspend fun createUser(user: User): User? {
-        val webResponse = fitsService.createUser(user).await()
+    suspend fun createUser(username: String, password: String): User? {
+        val webResponse = fitsService.createUser(username, password).await()
         return if (webResponse.isSuccessful) {
             webResponse.body()?.usuario
         } else {

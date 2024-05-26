@@ -1,6 +1,8 @@
 package com.example.outfitgenerator
 
 import android.os.Bundle
+import android.widget.Toast
+import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -31,6 +33,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
 import com.example.outfitgenerator.MainViewModel.MainViewModel
 import com.example.outfitgenerator.ui.theme.OutfitGeneratorTheme
 
@@ -45,7 +48,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Greeting("Android")
+                    LoginScreen(viewModel)
                 }
             }
         }
@@ -62,6 +65,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(viewModel: MainViewModel) {
+    val context = LocalContext.current
     var username = ""
     var password = ""
     var passwordVisible = false
@@ -107,8 +111,20 @@ fun LoginScreen(viewModel: MainViewModel) {
         Button(onClick = {
             var userauthenticate = viewModel.getUserByUsername(username)
             if(userauthenticate == null){
-                viewModel.createUser()
+                var sessionUser = viewModel.createUser(username, password)
+                var sessionUserId = sessionUser.value!!.id
+                val intent = Intent(context, SecondActivity::class.java)
+                context.startActivity(intent)
             }
+            else if (userauthenticate.value?.password != password ){
+                Toast.makeText(context,"La contraseña es incorrecta", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                var sessionUserId = userauthenticate.value!!.id
+                val intent = Intent(context, SecondActivity::class.java)
+                intent.putExtra("SESSION_USER_ID", sessionUserId)
+                context.startActivity(intent)
+           }
         }, modifier = Modifier.fillMaxWidth()) {
             Text("Login")
         }
@@ -125,7 +141,8 @@ fun GreetingPreview() {
 @Preview(showBackground = true)
 @Composable
 fun LoginPreview() {
+    val viewModel = MainViewModel()
     OutfitGeneratorTheme {
-        LoginScreen()
+        LoginScreen(viewModel)
     }
 }

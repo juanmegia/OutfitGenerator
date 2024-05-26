@@ -6,14 +6,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 
 object FitsAccess {
-    val fitsService : FitsService by lazy {
+    val fitsService : IFitsService by lazy {
 
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .baseUrl("http://127.0.0.1:8000/")
+            .baseUrl("https://outfitgenerator.azurewebsites.net/")
             .build()
 
-        return@lazy retrofit.create(fitsService::class.java)
+        return@lazy retrofit.create(IFitsService::class.java)
     }
 }

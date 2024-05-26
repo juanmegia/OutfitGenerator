@@ -3,7 +3,6 @@ package com.example.outfitgenerator.apiFits
 import com.example.outfitgenerator.models.Outfit
 import com.example.outfitgenerator.models.Piece
 import com.example.outfitgenerator.models.Respuesta
-import com.example.outfitgenerator.models.User
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -14,7 +13,7 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface FitsService {
+interface IFitsService {
     @GET("pieces/")
     suspend fun getPieceList(@Query("user_id") userId: String?): Deferred<Response<Respuesta>>
 
@@ -50,7 +49,7 @@ interface FitsService {
     suspend fun updateOutfit(@Path("outfit_id") outfitId: String, @Body outfit: Outfit): Deferred<Response<Respuesta>>
 
     @POST("create_user/")
-    suspend fun createUser(@Body user: User): Deferred<Response<Respuesta>>
+    suspend fun createUser(@Body username: String, password: String): Deferred<Response<Respuesta>>
 
     @GET("generate_outfit_view/")
     suspend fun generateOutfit(
