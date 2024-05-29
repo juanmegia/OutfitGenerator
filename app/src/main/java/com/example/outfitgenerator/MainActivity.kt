@@ -113,25 +113,20 @@ fun LoginScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-            var userauthenticate = viewModel.getUserByUsername(username)
-            if(userauthenticate.value== null){
-                var sessionUser = viewModel.createUser(username, password)
-                var sessionUserId = sessionUser.value!!.id
-                val intent = Intent(context, SecondActivity::class.java)
-                context.startActivity(intent)
+                viewModel.login(username, password) { success, user ->
+                    if (success) {
+                        Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(context, SecondActivity::class.java).apply {
+                            putExtra("user", user)
+                        }
+                        context.startActivity(intent)
+                    } else {
+                        Toast.makeText(context, "Login failed", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }) {
+                Text("Login")
             }
-            else if (userauthenticate.value?.password != password ){
-                Toast.makeText(context,"La contraseña es incorrecta", Toast.LENGTH_SHORT).show()
-            }
-            else {
-                var sessionUserId = userauthenticate.value!!.id
-                val intent = Intent(context, SecondActivity::class.java)
-                intent.putExtra("SESSION_USER_ID", sessionUserId)
-                context.startActivity(intent)
-           }
-        }, modifier = Modifier.fillMaxWidth()) {
-            Text("Login")
-        }
     }
 }
 

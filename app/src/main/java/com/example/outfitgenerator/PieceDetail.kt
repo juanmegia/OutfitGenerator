@@ -25,7 +25,7 @@ class PieceDetail : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Greeting2("Android")
-                    WardrobeScreen(viewModel, sessionUserId)
+
                 }
             }
         }

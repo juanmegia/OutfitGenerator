@@ -2,6 +2,7 @@ package com.example.outfitgenerator.MainViewModel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.outfitgenerator.apiFits.MainRepository
 import com.example.outfitgenerator.models.Outfit
 import com.example.outfitgenerator.models.Piece
@@ -9,14 +10,16 @@ import com.example.outfitgenerator.models.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainViewModel : ViewModel() {
     private var repository: MainRepository = MainRepository()
+    val sessionUser = MutableLiveData<User?>()
 
-    fun getPieceList(userId: String?): MutableLiveData<List<Piece>> {
+    fun getPieceList(username: String): MutableLiveData<List<Piece>> {
         val pieces = MutableLiveData<List<Piece>>()
         GlobalScope.launch(Dispatchers.Main) {
-            pieces.value = repository.getPieceList(userId)
+            pieces.value = repository.getPieceList(username)
         }
         return pieces
     }
@@ -71,11 +74,21 @@ class MainViewModel : ViewModel() {
     }
     fun createUser(username: String, password : String): MutableLiveData<User> {
         val createdUser = MutableLiveData<User>()
-        GlobalScope.launch(Dispatchers.Main) {
-            createdUser.value = repository.createUser(username, password)
+        GlobalScope.launch {
+            try {
+                val user = withContext(Dispatchers.IO) {
+                    repository.createUser(username, password)
+                }
+                createdUser.value = user
+            } catch (e: Exception) {
+                // Manejar la excepción, actualizar LiveData con un estado de error, etc.
+                createdUser.value = null
+                // Podrías usar otra LiveData para errores si prefieres
+            }
         }
         return createdUser
     }
+
     fun updateOutfit(outfitId: String, outfit: Outfit): MutableLiveData<Outfit> {
         val updatedOutfit = MutableLiveData<Outfit>()
         GlobalScope.launch(Dispatchers.Main) {
@@ -89,6 +102,31 @@ class MainViewModel : ViewModel() {
             userResponse.value = repository.getUserByUsername(username)
         }
         return userResponse
+    }
+    fun login(username: String, password: String, callback: (Boolean, User?) -> Unit) {
+        viewModelScope.launch {
+            var user = repository.getUserByUsername(username)
+            if (user == null) {
+                // Crear nuevo usuario si no existe
+                user = repository.createUser(username, password)
+                if (user != null) {
+                    sessionUser.value = user
+                    callback(true, user)
+                } else {
+                    sessionUser.value = null
+                    callback(false, null)
+                }
+            } else {
+                // Verificar la contraseña solo si el usuario ya existía
+                if (user.password == password) {
+                    sessionUser.value = user
+                    callback(true, user)
+                } else {
+                    sessionUser.value = null
+                    callback(false, null)
+                }
+            }
+        }
     }
 
 }

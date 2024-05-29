@@ -8,8 +8,8 @@ import com.example.outfitgenerator.models.User
 class MainRepository {
     private val fitsService = FitsAccess.fitsService;
 
-    suspend fun getPieceList(userId: String?): List<Piece> {
-        val webResponse = fitsService.getPieceList(userId).await()
+    suspend fun getPieceList(username: String): List<Piece> {
+        val webResponse = fitsService.getPieceList(username).await()
         return if (webResponse.isSuccessful) {
             webResponse.body()?.pieces ?: emptyList();
         } else {
@@ -24,14 +24,7 @@ class MainRepository {
             null
         }
     }
-    suspend fun createUser(username: String, password: String): User? {
-        val webResponse = fitsService.createUser(username, password).await()
-        return if (webResponse.isSuccessful) {
-            webResponse.body()?.usuario
-        } else {
-            null
-        }
-    }
+
     suspend fun getPieceDetail(id: String): Piece? {
         val webResponse = fitsService.getPieceDetail(id).await()
         return if (webResponse.isSuccessful) {
@@ -100,7 +93,17 @@ class MainRepository {
     suspend fun getUserByUsername(username: String): User? {
         val response = fitsService.getUserByUsername(username)
         return if (response.isSuccessful) {
-            response.body()!!.usuario
+            response.body()
+        } else {
+            null
+        }
+    }
+
+    suspend fun createUser(username: String, password: String): User? {
+        val newUser = User(username = username, password = password)
+        val response = fitsService.createUser(newUser)
+        return if (response.isSuccessful) {
+            response.body()
         } else {
             null
         }

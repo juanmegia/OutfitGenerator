@@ -10,7 +10,7 @@ data class PieceCategory(
 ) : Serializable
 data class Piece(
     val id: UUID,
-    val user: UUID, // Assuming this is UUID of the user
+    val username: String, // Assuming this is UUID of the user
     val name: String?,
     val brand: String?,
     val style: String,
@@ -22,12 +22,11 @@ data class Piece(
 ) : Serializable
 data class Outfit(
     val id: UUID,
-    val user: UUID, // Assuming this is UUID of the user
+    val username: String, // Assuming this is UUID of the user
     val name: String,
     val pieces: List<Piece>
 ) : Serializable
 data class User(
-    val id: UUID,
     val username: String,
     val password: String
 ): Serializable

@@ -28,14 +28,15 @@ import androidx.compose.ui.unit.dp
 import coil.compose.rememberAsyncImagePainter
 import com.example.outfitgenerator.MainViewModel.MainViewModel
 import com.example.outfitgenerator.models.Piece
+import com.example.outfitgenerator.models.User
 import com.example.outfitgenerator.ui.theme.OutfitGeneratorTheme
 
 class SecondActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val intent = intent
-        val sessionUserId = intent.getStringExtra("SESSION_USER_ID")
+        val user = intent.getSerializableExtra("user") as? User
+        var sessionUsername = user?.username
         setContent {
             OutfitGeneratorTheme {
                 // A surface container using the 'background' color from the theme
@@ -44,7 +45,9 @@ class SecondActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Greeting2("Android")
-                    WardrobeScreen(viewModel, sessionUserId)
+                    if (sessionUsername != null) {
+                        WardrobeScreen(viewModel, sessionUsername)
+                    }
                 }
             }
         }
@@ -52,15 +55,17 @@ class SecondActivity : ComponentActivity() {
 }
 
 @Composable
-fun WardrobeScreen(viewModel: MainViewModel, sessionUserId : String?){
-    var pieces = viewModel.getPieceList(sessionUserId)
+fun WardrobeScreen(viewModel: MainViewModel, sessionUsername : String){
+    var pieces = viewModel.getPieceList(sessionUsername)
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        if (pieces != null){
         pieces.value!!.forEach { item ->
             PieceRow(item)
+        }
         }
     }
 
