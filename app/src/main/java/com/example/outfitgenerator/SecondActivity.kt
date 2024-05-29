@@ -35,8 +35,7 @@ class SecondActivity : ComponentActivity() {
     private val viewModel: MainViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val user = intent.getSerializableExtra("user") as? User
-        var sessionUsername = user?.username
+        var username = intent.getStringExtra("username") ?: ""
         setContent {
             OutfitGeneratorTheme {
                 // A surface container using the 'background' color from the theme
@@ -45,8 +44,8 @@ class SecondActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     Greeting2("Android")
-                    if (sessionUsername != null) {
-                        WardrobeScreen(viewModel, sessionUsername)
+                    if (username != null) {
+                        WardrobeScreen(viewModel, username)
                     }
                 }
             }
@@ -55,8 +54,8 @@ class SecondActivity : ComponentActivity() {
 }
 
 @Composable
-fun WardrobeScreen(viewModel: MainViewModel, sessionUsername : String){
-    var pieces = viewModel.getPieceList(sessionUsername)
+fun WardrobeScreen(viewModel: MainViewModel, username : String){
+    var pieces = viewModel.getPieceList(username)
     Column(
         modifier = Modifier
             .fillMaxSize()

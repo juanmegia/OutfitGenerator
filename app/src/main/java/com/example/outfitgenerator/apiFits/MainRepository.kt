@@ -1,9 +1,12 @@
 package com.example.outfitgenerator.apiFits
 
+import androidx.lifecycle.MutableLiveData
 import com.example.outfitgenerator.models.Outfit
 import com.example.outfitgenerator.models.Piece
 import com.example.outfitgenerator.models.Respuesta
 import com.example.outfitgenerator.models.User
+import com.example.outfitgenerator.models.UserResponse
+import retrofit2.Response
 
 class MainRepository {
     private val fitsService = FitsAccess.fitsService;
@@ -107,5 +110,9 @@ class MainRepository {
         } else {
             null
         }
+    }
+
+    suspend fun authenticateOrCreateUser(username: String, password: String): Response<UserResponse> {
+        return fitsService.authenticateOrCreateUser(IFitsService.UserRequest(username, password))
     }
 }

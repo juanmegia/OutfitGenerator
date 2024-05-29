@@ -113,11 +113,11 @@ fun LoginScreen(viewModel: MainViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         Button(onClick = {
-                viewModel.login(username, password) { success, user ->
+            viewModel.authenticateOrCreateUser(username, password) { success ->
                     if (success) {
                         Toast.makeText(context, "Login successful", Toast.LENGTH_SHORT).show()
                         val intent = Intent(context, SecondActivity::class.java).apply {
-                            putExtra("user", user)
+                            putExtra("username", username)
                         }
                         context.startActivity(intent)
                     } else {

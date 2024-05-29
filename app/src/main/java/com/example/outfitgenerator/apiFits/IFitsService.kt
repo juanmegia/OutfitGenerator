@@ -4,6 +4,7 @@ import com.example.outfitgenerator.models.Outfit
 import com.example.outfitgenerator.models.Piece
 import com.example.outfitgenerator.models.Respuesta
 import com.example.outfitgenerator.models.User
+import com.example.outfitgenerator.models.UserResponse
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.Body
@@ -59,4 +60,10 @@ interface IFitsService {
         @Query("weather") weather: String?,
         @Query("categories") categories: List<String>
     ): Deferred<Response<Respuesta>>
+    @POST("authenticate_or_create_user/")
+    suspend fun authenticateOrCreateUser(@Body request: UserRequest): Response<UserResponse>
+    data class UserRequest(
+        val username: String,
+        val password: String
+    )
 }

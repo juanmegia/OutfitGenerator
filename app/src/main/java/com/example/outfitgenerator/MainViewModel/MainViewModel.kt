@@ -7,10 +7,12 @@ import com.example.outfitgenerator.apiFits.MainRepository
 import com.example.outfitgenerator.models.Outfit
 import com.example.outfitgenerator.models.Piece
 import com.example.outfitgenerator.models.User
+import com.example.outfitgenerator.models.UserResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 
 class MainViewModel : ViewModel() {
     private var repository: MainRepository = MainRepository()
@@ -125,6 +127,17 @@ class MainViewModel : ViewModel() {
                     sessionUser.value = null
                     callback(false, null)
                 }
+            }
+        }
+    }
+    val userResponse = MutableLiveData<Response<UserResponse>>()
+    fun authenticateOrCreateUser(username: String, password: String, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val response = repository.authenticateOrCreateUser(username, password)
+            if (response.isSuccessful) {
+                callback(true)
+            } else {
+                callback(false)
             }
         }
     }
